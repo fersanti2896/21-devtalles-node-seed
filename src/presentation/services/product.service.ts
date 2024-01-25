@@ -10,9 +10,7 @@ export class ProductService {
         if( productExists ) throw CustomError.badRequest('Product already exists');
 
         try {
-            const product = new ProductModel({
-                ...createProductDto
-            });
+            const product = new ProductModel(createProductDto);
 
             await product.save();
 
@@ -29,8 +27,10 @@ export class ProductService {
             const [ total, products ] = await Promise.all([
                 ProductModel.countDocuments(),
                 await ProductModel.find()
-                                   .skip( page )
-                                   .limit( limit )
+                                  .skip( page )
+                                  .limit( limit )
+                                  .populate('user')
+                                  .populate('category')
             ]);  
 
             return {
